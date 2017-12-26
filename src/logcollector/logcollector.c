@@ -185,7 +185,7 @@ void LogCollectorStart()
              */
 #ifdef WIN32
             if (current->fp) {
-                current->read(current, r, 1);
+                current->read(current, &r, 1);
             }
 #endif
         }
@@ -546,8 +546,10 @@ void LogCollectorStart()
             current->size = lpFileInformation.nFileSizeHigh + lpFileInformation.nFileSizeLow;
 #else
             current->size = tmp_stat.st_size;
+#endif
         }
 
+#ifndef WIN32
         if (globs) {
             glob_t g;
             int err;
@@ -843,11 +845,11 @@ void set_read(logreader *current, int i, int j) {
     if (strcmp("snort-full", current->logformat) == 0) {
         current->read = read_snortfull;
     }
-    #ifndef WIN32
+#ifndef WIN32
     if (strcmp("ossecalert", current->logformat) == 0) {
         current->read = read_ossecalert;
     }
-    #endif
+#endif
     else if (strcmp("nmapg", current->logformat) == 0) {
         current->read = read_nmapg;
     } else if (strcmp("json", current->logformat) == 0) {
